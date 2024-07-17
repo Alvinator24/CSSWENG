@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
@@ -43,7 +43,7 @@ const CreateTask = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (status.value === null || priority.value === null || selectedStaff.label === null) {
+    if (status.value === null || priority.value === null || selectedStaff.value === null) {
       alert('Please select a valid status, priority, and staff.');
       return;
     }
@@ -54,7 +54,7 @@ const CreateTask = () => {
       status: status.value,
       dueDate: dueDate?.toISOString(),
       priorityLevel: priority.value,
-      staff: selectedStaff.label,
+      staff: selectedStaff.value,
       createdAt: createdAt.toISOString(),
     };
 
@@ -110,10 +110,6 @@ const CreateTask = () => {
               value={status}
               onChange={(selectedOption) => {
                 const option = selectedOption as { label: string; value: string };
-                if (option.value === null) {
-                  alert('Please select a valid status.');
-                  return;
-                }
                 setStatus(option);
               }}
               options={[
@@ -145,10 +141,6 @@ const CreateTask = () => {
               value={priority}
               onChange={(selectedOption) => {
                 const option = selectedOption as { label: string; value: string };
-                if (option.value === null) {
-                  alert('Please select a valid priority.');
-                  return;
-                }
                 setPriority(option);
               }}
               options={[
@@ -169,16 +161,12 @@ const CreateTask = () => {
               value={selectedStaff}
               onChange={(selectedOption) => {
                 const option = selectedOption as { label: string; value: string };
-                if (option.value === null) {
-                  alert('Please select a valid staff.');
-                  return;
-                }
                 setSelectedStaff(option);
               }}
-              options={[
-                { label: 'Select Staff', value: null },
-                ...staffOptions
-              ]}
+              options={staffOptions}
+              placeholder="Search staff"
+              isClearable
+              isSearchable
             />
           </div>
           <div className="flex items-center justify-between">

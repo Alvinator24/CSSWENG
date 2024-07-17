@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Aerial from './leblanc-aerial-view.jpg';
 import { useRouter } from 'next/navigation';
-import supabase from '../../lib/supabaseClient'
+import supabase from '../../lib/supabaseClient';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-const handleSignin = async (event: React.FormEvent) => {
+  const handleSignin = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -20,21 +20,21 @@ const handleSignin = async (event: React.FormEvent) => {
     if (error) {
       alert(error.message);
     } else {
+      localStorage.setItem('userEmail', email);
+      // check if email belongs to admin, manager, or staff then redirect accordingly
+      // /manager/id, /staff/id, /admin/id, get the id based off email
       router.push('/manager');
     }
   };
 
   const handleForgotPassword = () => {
-    // Implement logic for forgot password functionality, such as navigating to a forgot password page or showing a modal.
     console.log('Forgot Password clicked');
-    // Example: navigate to /forgot-password route
-    // Router.push('/forgot-password');
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-brand-cream">
       <div className="w-full max-w-md p-8 space-y-6 bg-brand-cream">
-      <div className="flex justify-center">
+        <div className="flex justify-center">
           <Image
             src={Aerial}
             alt="Banner"
@@ -80,7 +80,7 @@ const handleSignin = async (event: React.FormEvent) => {
             <button
               type="submit"
               className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                Sign In
+              Sign In
             </button>
           </div>
           <div className="text-sm text-center">
