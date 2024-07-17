@@ -102,7 +102,7 @@ const TaskDashboard = () => {
               </Link>
             </li>
             <li>
-              <Link href="/announcements">
+              <Link href="/announcement">
                 <h2 className="block text-white hover:text-brand-dgreen">Announcements</h2>
               </Link>
             </li>
@@ -128,7 +128,7 @@ const TaskDashboard = () => {
             <Link href="/manager/create-task">
                 <h2 className="px-4 py-2 bg-brand-brown text-white rounded hover:bg-brand-lgreen">+ Add Task</h2>
             </Link>
-        </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {tasks.map(task => (
               <div key={task.id} className="bg-white p-4 rounded shadow hover:shadow-md transition-shadow duration-200 cursor-pointer">
