@@ -145,7 +145,7 @@ const AnnouncementsDashboard = () => {
                 <p className="text-sm text-gray-600">{announcement.description}</p>
                 <h3 className="text-sm text-gray-600 mt-5">Created on: {announcement.created_at}</h3>
                 <div className="flex justify-end mt-4 space-x-2">
-                  <Link href={`/announcements/edit/${announcement.id}`} passHref>
+                  <Link href={`/announcement/edit-announcement/${announcement.id}`} passHref>
                     <button
                       className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-400"
                     >
