@@ -183,7 +183,7 @@ const CreateTask = () => {
             </button>
           </div>
           <div className="text-sm text-center">
-            <Link href="/staff">
+            <Link href="/manager">
               <h2 className="font-medium text-brand-dgreen">Return to dashboard</h2>
             </Link>
           </div>

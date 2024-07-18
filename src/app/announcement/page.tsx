@@ -82,7 +82,7 @@ const AnnouncementsPage = () => {
               </Link>
             </li>
             <li>
-              <Link href="/announcements">
+              <Link href="/announcement">
                 <h2 className="block text-white hover:text-brand-dgreen">Announcements</h2>
               </Link>
             </li>
