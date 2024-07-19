@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Aerial from './leblanc-aerial-view.jpg';
 import { useRouter } from 'next/navigation';
 import supabase from '../../lib/supabaseClient';
+import bcrypt from 'bcryptjs'
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -15,15 +16,41 @@ const LoginPage = () => {
   const handleSignin = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data: user, error } = await supabase
+        .from('user')
+        .select('*')
+        .eq('email', email)
+        .single();
 
-    if (error) {
-      alert(error.message);
+    if(!user || error) {
+      alert('Invalid credentials');
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if(!match) {
+      window.location.href = '/login';
+      return;
     } else {
       localStorage.setItem('userEmail', email);
-      // check if email belongs to admin, manager, or staff then redirect accordingly
-      // /manager/id, /staff/id, /admin/id, get the id based off email
-      router.push('/manager');
+
+      const { data } = await supabase
+      .from('user')
+      .select('position')
+      .eq('email', email)
+      .single();
+
+      const position = data.position;
+
+      console.log(position)
+
+      if(position === 'admin') {
+        router.push('/admin');
+      } else if(position === 'manager') {
+        router.push('/manager');
+      } else {
+        router.push('/staff');
+      }
     }
   };
 
@@ -79,6 +106,7 @@ const LoginPage = () => {
           <div>
             <button
               type="submit"
+              onClick={handleSignin}
               className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
               Sign In
             </button>

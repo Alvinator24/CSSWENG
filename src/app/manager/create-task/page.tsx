@@ -20,10 +20,12 @@ const CreateTask = () => {
   const [selectedStaff, setSelectedStaff] = useState<{ label: string; value: string | null }>({ label: 'Select Staff', value: null });
   const [createdAt] = useState(new Date());
 
+  const email = localStorage.getItem('userEmail')
+
   useEffect(() => {
     async function fetchStaff() {
       try {
-        const { data: staff, error } = await supabase.from('staff').select('firstname, lastname, email');
+        const { data: staff, error } = await supabase.from('user').select('firstname, lastname, email').eq('position', 'staff');
         if (error) {
           throw error;
         }
@@ -55,6 +57,7 @@ const CreateTask = () => {
       dueDate: dueDate?.toISOString(),
       priorityLevel: priority.value,
       staff: selectedStaff.value,
+      manager: email,
       createdAt: createdAt.toISOString(),
     };
 

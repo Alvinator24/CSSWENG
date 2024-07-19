@@ -40,7 +40,7 @@ const SignUp = () => {
     if (error) {
       alert(error.message);
     } else {
-      router.push('/login');
+      router.push('/');
     }
   };
 

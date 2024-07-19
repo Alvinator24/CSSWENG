@@ -43,7 +43,7 @@ const EditTask = () => {
     }
 
     const updatedTask = {
-      status: status.value,
+      status: status.value
     };
 
     try {

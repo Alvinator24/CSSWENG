@@ -12,6 +12,7 @@ const AccountDetails = () => {
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [position, setPosition] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,8 +22,8 @@ const AccountDetails = () => {
         if (!userEmail) {
           throw new Error('No user email found in local storage.');
         }
-        const { data: manager, error } = await supabase
-          .from('managers')
+        const { data: user, error } = await supabase
+          .from('user')
           .select('firstname, lastname, email')
           .eq('email', userEmail)
           .single();
@@ -30,9 +31,9 @@ const AccountDetails = () => {
         if (error) {
           throw error;
         }
-        setFirstName(manager.firstname);
-        setLastName(manager.lastname);
-        setEmail(manager.email);
+        setFirstName(user.firstname);
+        setLastName(user.lastname);
+        setEmail(user.email);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -45,48 +46,60 @@ const AccountDetails = () => {
     event.preventDefault();
     try {
       const userEmail = localStorage.getItem('userEmail');
-      if (!userEmail) {
-        throw new Error('No user email found in local storage.');
-      }
 
-      const updates: any = {
+      const updates = {
         firstname: firstName,
         lastname: lastName,
         email: email,
       };
 
-      // Include password update if provided and valid
       if (newPassword) {
         if (newPassword !== confirmNewPassword) {
           alert('Passwords do not match.');
           return;
         }
-        // Use Supabase auth to update password
-        const { error: passwordError } = await supabase.auth.updateUser({ password: newPassword });
-        if (passwordError) {
-          alert(`Error updating password: ${passwordError.message}`);
-          return;
-        }
+
       }
 
       const { error } = await supabase
-        .from('managers')
+        .from('user')
         .update(updates)
         .eq('email', userEmail);
 
       if (error) {
         alert(`Error updating account details: ${error.message}`);
       } else {
-        alert('Account details updated successfully!');
-        // Clear password fields after successful update
         setNewPassword('');
         setConfirmNewPassword('');
       }
+      
     } catch (error) {
       console.error('Error updating account details:', error);
       alert('An error occurred while updating account details.');
     }
   };
+
+  useEffect(() => {
+    const fetchUserPosition = async () => {
+      const email = localStorage.getItem('userEmail');
+
+      try {
+        const { data } = await supabase
+          .from('user')
+          .select('id, position')
+          .eq('email', email)
+          .single();
+
+        if (data) {
+          setPosition(data.position);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchUserPosition();
+  }, []);
 
   const handleDelete = async () => {
     try {
@@ -105,7 +118,7 @@ const AccountDetails = () => {
       } else {
         alert('Account deleted successfully!');
         localStorage.removeItem('userEmail');
-        router.push('/login'); // Redirect to the login page or home page after deletion
+        router.push('/login');
       }
     } catch (error) {
       console.error('Error deleting account:', error);
@@ -214,10 +227,22 @@ const AccountDetails = () => {
                 Delete Account
               </button>
             </div>
-            <div className="text-sm text-center">
-              <Link href="/dashboard">
-                <h2 className="font-medium text-brand-dgreen">Return to dashboard</h2>
-              </Link>
+            <div className="text-sm text-center mt-4">
+              {position === 'admin' && (
+                <Link href="/admin">
+                  <h2 className="font-medium text-brand-dgreen">Return to dashboard</h2>
+                </Link>
+              )}
+              {position === 'manager' && (
+                <Link href="/manager">
+                  <h2 className="font-medium text-brand-dgreen">Return to dashboard</h2>
+                </Link>
+              )}
+              {position === 'staff' && (
+                <Link href="/staff">
+                  <h2 className="font-medium text-brand-dgreen">Return to dashboard</h2>
+                </Link>
+              )}
             </div>
           </form>
         </div>
