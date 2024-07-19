@@ -7,7 +7,7 @@ import supabase from '../../../../lib/supabaseClient';
 
 const EditAnnouncement = () => {
   const router = useRouter();
-  const { id } = useParams();
+  const id = useParams();
 
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -20,9 +20,9 @@ const EditAnnouncement = () => {
         if (error) {
           throw error;
         }
-        setTitle(announcement.title || '');
-        setDescription(announcement.description || '');
-        setCreatedAt(new Date(announcement.created_at || '').toISOString());
+        setTitle(announcement.title);
+        setDescription(announcement.description);
+        setCreatedAt(new Date(announcement.created_at).toISOString());
       } catch (error) {
         console.error('Error fetching announcement:', error);
       }

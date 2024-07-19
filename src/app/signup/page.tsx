@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import supabase from '../../lib/supabaseClient';
+import bcrypt from 'bcryptjs';
 
 const SignUp = () => {
   const router = useRouter();
@@ -11,7 +12,7 @@ const SignUp = () => {
   const [firstname, setFirstname] = useState<string>('');
   const [lastname, setLastname] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [position, setPosition] = useState<string>(''); // New state for position
+  const [position, setPosition] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
@@ -24,21 +25,20 @@ const SignUp = () => {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const { error: insertError } = await supabase.from('manager').insert([
+    const { error } = await supabase.from('user').insert([
       {
         firstname,
         lastname,
         email,
-        position
+        position,
+        password: hashedPassword
       }
     ]);
 
     if (error) {
       alert(error.message);
-    } else if (insertError) {
-      alert(insertError.message);
     } else {
       router.push('/login');
     }
