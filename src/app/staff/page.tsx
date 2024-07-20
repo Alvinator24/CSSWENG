@@ -22,6 +22,7 @@ const StaffDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const [staffName, setStaffName] = useState<string>('');
+  const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -74,6 +75,23 @@ const StaffDashboard = () => {
     fetchStaffName();
   }, []);
 
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const email = localStorage.getItem('userEmail');
+      const { data, error } = await supabase.from('user').select('id').eq('email', email).single();
+
+      if (error) {
+        console.error('Error:', error.message);
+        return;
+      }
+      if (data) {
+        setUserId(data.id);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
   const filteredTasks = tasks.filter(task => task.staff === staffName && (filterStatus ? task.status === filterStatus : true));
 
   return (
@@ -100,12 +118,12 @@ const StaffDashboard = () => {
           </div>
           <ul className="space-y-2">
             <li>
-              <Link href="/account">
+              <Link href={`/account/${userId}`}>
                 <h2 className="block text-white hover:text-brand-dgreen">Account</h2>
               </Link>
             </li>
             <li>
-              <Link href="/dashboard">
+              <Link href="/staff">
                 <h2 className="block text-white hover:text-brand-dgreen">Dashboard</h2>
               </Link>
             </li>

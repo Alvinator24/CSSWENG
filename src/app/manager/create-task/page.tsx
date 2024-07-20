@@ -11,15 +11,16 @@ import supabase from '../../../lib/supabaseClient';
 const CreateTask = () => {
   const router = useRouter();
 
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [status, setStatus] = useState<{ label: string; value: string }>({ label: 'Not Started', value: 'Not Started' });
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [priority, setPriority] = useState<{ label: string; value: string | null }>({ label: 'Select Priority', value: null });
   const [staffOptions, setStaffOptions] = useState<{ label: string; value: string }[]>([]);
   const [selectedStaff, setSelectedStaff] = useState<{ label: string; value: string | null }>({ label: 'Select Staff', value: null });
-  const [managerName, setManagerName] = useState<string>('');
-  const [staffName, setStaffName] = useState<string>('');
+  const [managerName, setManagerName] = useState('');
+  const [staffName, setStaffName] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [createdAt] = useState(new Date());
 
   useEffect(() => {
@@ -53,8 +54,7 @@ const CreateTask = () => {
         .single();
 
       if (error) {
-        console.error('Error fetching user data:', error);
-        return;
+        throw error;
       }
 
       const managerFirstName = data?.firstname;
@@ -70,16 +70,15 @@ const CreateTask = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (status.value === null || priority.value === null || selectedStaff.value === null) {
-      alert('Please select a valid status, priority, and staff.');
+    if (!status.value || !dueDate || !priority.value || !selectedStaff.value) {
+      setErrorMessage('Please fill out all of the fields.');
       return;
     }
-
     const newTask = {
       title,
       description,
       status: status.value,
-      dueDate: dueDate?.toISOString(),
+      dueDate: dueDate.toISOString(),
       priorityLevel: priority.value,
       staff: staffName,
       manager: managerName,
@@ -89,7 +88,7 @@ const CreateTask = () => {
     const { error } = await supabase.from('task').insert([newTask]);
 
     if (error) {
-      alert(`Error inserting data: ${error.message}`)
+      throw error;
     }
 
     router.push('/manager');
@@ -176,9 +175,14 @@ const CreateTask = () => {
               name="staff"
               value={selectedStaff}
               onChange={(selectedOption) => {
-                const option = selectedOption as { label: string; value: string };
-                setSelectedStaff(option);
-                setStaffName(option.label);
+                if (selectedOption) {
+                  const option = selectedOption as { label: string; value: string };
+                  setSelectedStaff(option);
+                  setStaffName(option.label);
+                } else {
+                  setSelectedStaff({ label: 'Select Staff', value: null });
+                  setStaffName('');
+                }
               }}
               options={staffOptions}
               placeholder="Search staff"
@@ -191,6 +195,9 @@ const CreateTask = () => {
               <p>Today is: {createdAt.toLocaleDateString()}</p>
             </div>
           </div>
+          {errorMessage && (
+            <div className="mt-2 text-red-600 bg-white border border-red-600 rounded px-2 py-1 shadow-lg flex justify-center">{errorMessage}</div>
+          )}
           <div>
             <button type="submit" className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Create Task</button>
           </div>

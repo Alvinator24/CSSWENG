@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import supabase from '../../../lib/supabaseClient';
+import bcrypt from 'bcryptjs';
 
 const AccountDetails = () => {
   const [firstName, setFirstName] = useState<string>('');
@@ -13,6 +14,7 @@ const AccountDetails = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [position, setPosition] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -22,6 +24,7 @@ const AccountDetails = () => {
         if (!userEmail) {
           throw new Error('No user email found in local storage.');
         }
+
         const { data: user, error } = await supabase
           .from('user')
           .select('firstname, lastname, email')
@@ -31,9 +34,11 @@ const AccountDetails = () => {
         if (error) {
           throw error;
         }
+
         setFirstName(user.firstname);
         setLastName(user.lastname);
         setEmail(user.email);
+
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -47,30 +52,39 @@ const AccountDetails = () => {
     try {
       const userEmail = localStorage.getItem('userEmail');
 
-      const updates = {
-        firstname: firstName,
-        lastname: lastName,
-        email: email,
-      };
-
-      if (newPassword) {
-        if (newPassword !== confirmNewPassword) {
-          alert('Passwords do not match.');
-          return;
-        }
-
+      if (newPassword !== confirmNewPassword) {
+        setErrorMessage('Passwords do not match.');
+        return;
       }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
 
       const { error } = await supabase
         .from('user')
-        .update(updates)
+        .update({ password: hashedPassword })
         .eq('email', userEmail);
 
       if (error) {
-        alert(`Error updating account details: ${error.message}`);
+        throw error;
       } else {
         setNewPassword('');
         setConfirmNewPassword('');
+        
+        const { data } = await supabase
+          .from('user')
+          .select('position')
+          .eq('email', email)
+          .single();
+
+        const position = data.position;
+
+        if(position === 'admin') {
+          router.push('/admin');
+        } else if(position === 'manager') {
+          router.push('/manager');
+        } else {
+          router.push('/staff');
+        }
       }
       
     } catch (error) {
@@ -93,6 +107,7 @@ const AccountDetails = () => {
         if (data) {
           setPosition(data.position);
         }
+
       } catch (error) {
         console.error('Error:', error);
       }
@@ -114,15 +129,14 @@ const AccountDetails = () => {
         .eq('email', userEmail);
 
       if (error) {
-        alert(`Error deleting account: ${error.message}`);
+        throw error;
       } else {
-        alert('Account deleted successfully!');
         localStorage.removeItem('userEmail');
         router.push('/login');
       }
+
     } catch (error) {
       console.error('Error deleting account:', error);
-      alert('An error occurred while deleting the account.');
     } finally {
       closeModal();
     }
@@ -143,51 +157,19 @@ const AccountDetails = () => {
           <h3 className="text-lg text-center text-gray-900">Account Details</h3>
           <form className="space-y-6" onSubmit={handleUpdate}>
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                First Name
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                className="w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name:</label>
+              <h1 className="mt-2">{firstName}</h1>
             </div>
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                Last Name
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-                className="w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name:</label>
+              <h1 className="mt-2">{lastName}</h1>
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              />
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+              <h1 className="mt-2">{email}</h1>
             </div>
             <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                New Password
-              </label>
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">New Password</label>
               <input
                 id="newPassword"
                 name="newPassword"
@@ -195,12 +177,11 @@ const AccountDetails = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                required
               />
             </div>
             <div>
-              <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700">
-                Confirm New Password
-              </label>
+              <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700">Confirm New Password</label>
               <input
                 id="confirmNewPassword"
                 name="confirmNewPassword"
@@ -208,24 +189,17 @@ const AccountDetails = () => {
                 value={confirmNewPassword}
                 onChange={(e) => setConfirmNewPassword(e.target.value)}
                 className="w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                required
               />
             </div>
+            {errorMessage && (
+              <div className="mt-2 text-red-600 bg-white border border-red-600 rounded px-2 py-1 shadow-lg flex justify-center">{errorMessage}</div>
+            )}
             <div className="space-y-4">
-              <button
-                type="submit"
-                className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                Update
-              </button>
+              <button type="submit" className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Update</button>
             </div>
             <div className="space-y-4">
-              <button
-                type="button"
-                onClick={openModal}
-                className="w-full px-4 py-2 font-medium text-white bg-red-500 hover:bg-red-700 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              >
-                Delete Account
-              </button>
+              <button type="button" onClick={openModal} className="w-full px-4 py-2 font-medium text-white bg-red-500 hover:bg-red-700 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">Delete Account</button>
             </div>
             <div className="text-sm text-center mt-4">
               {position === 'admin' && (
@@ -255,18 +229,8 @@ const AccountDetails = () => {
             <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
             <p className="mb-4">Are you sure you want to delete your account?</p>
             <div className="flex justify-end space-x-4">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Delete
-              </button>
+              <button onClick={closeModal} className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancel</button>
+              <button onClick={handleDelete} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
             </div>
           </div>
         </div>

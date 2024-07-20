@@ -52,7 +52,7 @@ const CreateAnnouncement = () => {
       const { error } = await supabase.from('announcement').insert([newAnnouncement]);
 
       if (error) {
-        alert(error);
+        console.error(error);
       }
 
       router.push('/admin');

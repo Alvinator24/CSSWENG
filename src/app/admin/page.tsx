@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -13,21 +13,26 @@ interface Announcement {
   created_at: string;
 }
 
-const AnnouncementsDashboard = () => {
+const AdminDashboard = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAnnouncementId, setSelectedAnnouncementId] = useState<number | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     async function fetchAnnouncements() {
       try {
-        const { data: announcements, error } = await supabase.from('announcement').select('*');
+        const { data: announcements, error } = await supabase
+          .from('announcement')
+          .select('*');
+
         if (error) {
           throw error;
         }
         setAnnouncements(announcements || []);
+
       } catch (error) {
         console.error('Error fetching announcements:', error);
       }
@@ -36,16 +41,42 @@ const AnnouncementsDashboard = () => {
     fetchAnnouncements();
   }, []);
 
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const email = localStorage.getItem('userEmail');
+      const { data, error } = await supabase
+        .from('user')
+        .select('id')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+      if (data) {
+        setUserId(data.id);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
   const handleDelete = async () => {
     if (selectedAnnouncementId !== null) {
       try {
-        const { error } = await supabase.from('announcement').delete().eq('id', selectedAnnouncementId);
+        const { error } = await supabase
+          .from('announcement')
+          .delete()
+          .eq('id', selectedAnnouncementId);
+          
         if (error) {
           throw error;
         }
+
         setAnnouncements(announcements.filter(announcement => announcement.id !== selectedAnnouncementId));
         setIsModalOpen(false);
         setSelectedAnnouncementId(null);
+
       } catch (error) {
         console.error('Error deleting announcement:', error);
       }
@@ -74,6 +105,7 @@ const AnnouncementsDashboard = () => {
   return (
     <div className="min-h-screen bg-brand-cream">
       <div className="relative">
+
         {/* Hamburger Icon */}
         {!isSidebarOpen && (
           <button className="absolute top-4 left-4 z-10 text-brown focus:outline-none" onClick={toggleSidebar}>
@@ -95,7 +127,7 @@ const AnnouncementsDashboard = () => {
           </div>
           <ul className="space-y-2">
             <li>
-              <Link href={`/account`}>
+              <Link href={`/account/${userId}`}>
                 <h2 className="block text-white hover:text-brand-dgreen">Account</h2>
               </Link>
             </li>
@@ -158,18 +190,8 @@ const AnnouncementsDashboard = () => {
             <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
             <p className="mb-4">Are you sure you want to delete this announcement?</p>
             <div className="flex justify-end space-x-4">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-red-400"
-              >
-                Delete
-              </button>
+              <button onClick={closeModal} className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancel</button>
+              <button onClick={handleDelete} className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-red-400">Delete</button>
             </div>
           </div>
         </div>
@@ -178,4 +200,4 @@ const AnnouncementsDashboard = () => {
   );
 };
 
-export default AnnouncementsDashboard;
+export default AdminDashboard;

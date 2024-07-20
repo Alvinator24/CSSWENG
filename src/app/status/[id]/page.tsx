@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -42,15 +42,15 @@ const EditTask = () => {
       return;
     }
 
-    const updatedTask = {
+    const updatedStatus = {
       status: status.value
     };
 
     try {
-      const { error } = await supabase.from('task').update(updatedTask).eq('id', taskId);
+      const { error } = await supabase.from('task').update(updatedStatus).eq('id', taskId);
 
       if (error) {
-        alert(`Error updating task: ${error.message}`);
+        throw error;
       } else {
         router.push('/staff');
       }
@@ -86,9 +86,9 @@ const EditTask = () => {
               onChange={(selectedOption) => setStatus(selectedOption as { label: string; value: string })}
               options={[
                 { label: 'Select Status', value: null },
-                { label: 'Not Started', value: 'not_started' },
-                { label: 'In Progress', value: 'in_progress' },
-                { label: 'Completed', value: 'completed' },
+                { label: 'Not Started', value: 'Not Started' },
+                { label: 'In Progress', value: 'In Progress' },
+                { label: 'Completed', value: 'Completed' },
               ]}
             />
           </div>

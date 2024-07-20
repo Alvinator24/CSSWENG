@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -11,6 +11,7 @@ import bcrypt from 'bcryptjs'
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
   const handleSignin = async (event: React.FormEvent) => {
@@ -23,13 +24,13 @@ const LoginPage = () => {
         .single();
 
     if(!user || error) {
-      alert('Invalid credentials');
+      setErrorMessage('User does not exist.');
     }
 
     const match = await bcrypt.compare(password, user.password);
 
     if(!match) {
-      window.location.href = '/login';
+      setErrorMessage('Incorrect password. Try again.');
       return;
     } else {
       localStorage.setItem('userEmail', email);
@@ -41,8 +42,6 @@ const LoginPage = () => {
       .single();
 
       const position = data.position;
-
-      console.log(position)
 
       if(position === 'admin') {
         router.push('/admin');
@@ -62,11 +61,7 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-brand-cream">
       <div className="w-full max-w-md p-8 space-y-6 bg-brand-cream">
         <div className="flex justify-center">
-          <Image
-            src={Aerial}
-            alt="Banner"
-            width={400}
-          />
+          <Image src={Aerial} alt="Banner" width={400}/>
         </div>
         <h3 className="text-lg text-center text-gray-900">Sign in to your account</h3>
         <form className="space-y-6" onSubmit={handleSignin}>
@@ -103,6 +98,11 @@ const LoginPage = () => {
               className="w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
+          {errorMessage && (
+            <div className="mt-2 text-red-600 bg-white border border-red-600 rounded px-2 py-1 shadow-lg flex justify-center">
+              {errorMessage}
+            </div>
+          )}
           <div>
             <button
               type="submit"

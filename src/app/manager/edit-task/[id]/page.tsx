@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
@@ -26,7 +26,7 @@ const EditTask = () => {
       try {
         const { data: staff, error } = await supabase.from('staff').select('firstname, lastname, email');
         if (error) {
-          console.error('Error:', error);
+          throw error;
         }
         const options = staff.map((member: any) => ({
           label: `${member.firstname} ${member.lastname}`,
@@ -40,7 +40,11 @@ const EditTask = () => {
 
     async function fetchTask() {
       try {
-        const { data: task, error } = await supabase.from('task').select('*').eq('id', taskId).single();
+        const { data: task, error } = await supabase
+          .from('task')
+          .select('*')
+          .eq('id', taskId)
+          .single();
         if (error) {
           throw error;
         }
@@ -81,10 +85,13 @@ const EditTask = () => {
     };
 
     try {
-      const { error } = await supabase.from('task').update(updatedTask).eq('id', taskId);
+      const { error } = await supabase
+        .from('task')
+        .update(updatedTask)
+        .eq('id', taskId);
 
       if (error) {
-        alert(`Error updating task: ${error.message}`);
+        throw error;
       } else {
         router.push('/manager');
       }
@@ -100,9 +107,7 @@ const EditTask = () => {
         <h3 className="text-lg text-center text-gray-900">Edit Task</h3>
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              Title
-            </label>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
             <input
               id="title"
               name="title"
@@ -114,9 +119,7 @@ const EditTask = () => {
             />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-              Description
-            </label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
             <textarea
               id="description"
               name="description"
@@ -128,9 +131,7 @@ const EditTask = () => {
             />
           </div>
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-              Status
-            </label>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
             <Select
               id="status"
               name="status"
@@ -145,9 +146,7 @@ const EditTask = () => {
             />
           </div>
           <div>
-            <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">
-              Due Date
-            </label>
+            <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">Due Date</label>
             <DatePicker
               id="dueDate"
               selected={dueDate}
@@ -157,9 +156,7 @@ const EditTask = () => {
             />
           </div>
           <div>
-            <label htmlFor="priority" className="block text-sm font-medium text-gray-700">
-              Priority Level
-            </label>
+            <label htmlFor="priority" className="block text-sm font-medium text-gray-700">Priority Level</label>
             <Select
               id="priority"
               name="priority"
@@ -174,9 +171,7 @@ const EditTask = () => {
             />
           </div>
           <div>
-            <label htmlFor="staff" className="block text-sm font-medium text-gray-700">
-              Assign To
-            </label>
+            <label htmlFor="staff" className="block text-sm font-medium text-gray-700">Assign To</label>
             <Select
               id="staff"
               name="staff"
@@ -184,7 +179,7 @@ const EditTask = () => {
               onChange={(selectedOption) => setStaff(selectedOption as { label: string; value: string })}
               options={[
                 { label: 'Select Staff', value: null },
-                ...staffOptions // Populate with fetched staff options
+                ...staffOptions
               ]}
             />
           </div>
@@ -194,12 +189,7 @@ const EditTask = () => {
             </div>
           </div>
           <div className="space-y-4">
-            <button
-              type="submit"
-              className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Update Task
-            </button>
+            <button type="submit" className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Update Task</button>
           </div>
           <div className="text-sm text-center">
             <Link href="/manager">
