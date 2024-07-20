@@ -19,6 +19,8 @@ const AdminDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAnnouncementId, setSelectedAnnouncementId] = useState<number | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [authorName, setAuthorName] = useState<string>('');
+
   const router = useRouter();
 
   useEffect(() => {
@@ -102,6 +104,33 @@ const AdminDashboard = () => {
     setSelectedAnnouncementId(null);
   };
 
+  useEffect(() => {
+    const fetchAuthorName = async () => {
+      const fetchEmail = localStorage.getItem('userEmail');
+
+      const { data, error } = await supabase
+        .from('user')
+        .select('firstname, lastname')
+        .eq('email', fetchEmail)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return;
+      }
+
+      const authorFirstName = data?.firstname;
+      const authorLastName = data?.lastname;
+      const authorFullName = `${authorFirstName} ${authorLastName}`;
+
+      setAuthorName(authorFullName);
+    };
+
+    fetchAuthorName();
+  }, []);
+
+  const filteredAnnouncements = announcements.filter(announcement => announcement.author === authorName);
+
   return (
     <div className="min-h-screen bg-brand-cream">
       <div className="relative">
@@ -132,8 +161,13 @@ const AdminDashboard = () => {
               </Link>
             </li>
             <li>
-              <Link href="/dashboard">
+              <Link href="/admin">
                 <h2 className="block text-white hover:text-brand-dgreen">Dashboard</h2>
+              </Link>
+            </li>
+            <li>
+              <Link href="/announcement">
+                <h2 className="block text-white hover:text-brand-dgreen">Announcements</h2>
               </Link>
             </li>
           </ul>
@@ -157,7 +191,7 @@ const AdminDashboard = () => {
             </Link>
           </div>
           <div className="space-y-4">
-            {announcements.map(announcement => (
+            {filteredAnnouncements.map(announcement => (
               <div key={announcement.id} className="bg-white p-4 rounded shadow hover:shadow-md transition-shadow duration-200 cursor-pointer">
                 <h2 className="text-lg font-bold mb-2">{announcement.title}</h2>
                 <p className="text-sm text-gray-600">{announcement.description}</p>

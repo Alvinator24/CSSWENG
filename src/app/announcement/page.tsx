@@ -9,6 +9,7 @@ interface Announcement {
   id: number;
   title: string;
   description: string;
+  author: string;
   created_at: string;
 };
 
@@ -109,7 +110,7 @@ const AnnouncementsPage = () => {
               <div key={announcement.id} className="bg-white p-4 rounded shadow hover:shadow-md transition-shadow duration-200 cursor-pointer">
                 <h2 className="text-lg font-bold mb-2">{announcement.title}</h2>
                 <p className="text-sm text-gray-600">{announcement.description}</p>
-                <h3 className="text-sm text-gray-600 mt-5">Created on: {announcement.created_at}</h3>
+                <h3 className="text-sm text-gray-600 mt-5">Published by {announcement.author} on {announcement.created_at}</h3>
               </div>
             ))}
           </div>

@@ -124,7 +124,7 @@ const AccountDetails = () => {
       }
 
       const { error } = await supabase
-        .from('managers')
+        .from('user')
         .delete()
         .eq('email', userEmail);
 
@@ -132,7 +132,7 @@ const AccountDetails = () => {
         throw error;
       } else {
         localStorage.removeItem('userEmail');
-        router.push('/login');
+        router.push('/');
       }
 
     } catch (error) {

@@ -100,12 +100,7 @@ const CreateAnnouncement = () => {
             </div>
           </div>
           <div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              Create Announcement
-            </button>
+            <button type="submit" className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Create</button>
           </div>
           <div className="text-sm text-center">
             <Link href="/admin">
