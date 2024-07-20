@@ -78,9 +78,7 @@ const EditTask = () => {
             <p id="description" className="mt-1 text-gray-900">{description}</p>
           </div>
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-              Status
-            </label>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
             <Select
               id="status"
               name="status"
@@ -95,12 +93,7 @@ const EditTask = () => {
             />
           </div>
           <div className="space-y-4">
-            <button
-              type="submit"
-              className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Update Task
-            </button>
+            <button type="submit" className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Update Status</button>
           </div>
           <div className="text-sm text-center">
             <Link href="/staff">

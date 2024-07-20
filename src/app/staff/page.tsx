@@ -17,10 +17,11 @@ interface Task {
   createdAt: string;
 }
 
-const TaskDashboard = () => {
+const StaffDashboard = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
+  const [staffName, setStaffName] = useState<string>('');
   const router = useRouter();
 
   useEffect(() => {
@@ -40,11 +41,7 @@ const TaskDashboard = () => {
   }, []);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error logging out:', error.message);
-      return;
-    }
+    localStorage.removeItem('userEmail');
     router.push('/');
   };
 
@@ -56,19 +53,35 @@ const TaskDashboard = () => {
     setFilterStatus(event.target.value);
   };
 
-  const email = localStorage.getItem('userEmail')
-  const filteredTasks = tasks.filter(task => task.staff === email && (filterStatus ? task.status === filterStatus : true));
+  useEffect(() => {
+    const fetchStaffName = async () => {
+      const fetchEmail = localStorage.getItem('userEmail');
 
+      const { data, error } = await supabase.from('user').select('firstname, lastname').eq('email', fetchEmail).single();
+
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return;
+      }
+
+      const staffFirstName = data?.firstname;
+      const staffLastName = data?.lastname;
+      const staffFullName = `${staffFirstName} ${staffLastName}`;
+
+      setStaffName(staffFullName);
+    };
+
+    fetchStaffName();
+  }, []);
+
+  const filteredTasks = tasks.filter(task => task.staff === staffName && (filterStatus ? task.status === filterStatus : true));
 
   return (
     <div className="min-h-screen bg-brand-cream flex">
 
         {/* Hamburger Icon */}
         {!isSidebarOpen && (
-          <button
-            className="absolute top-4 left-4 z-10 text-brown"
-            onClick={toggleSidebar}
-          >
+          <button className="absolute top-4 left-4 z-10 text-brown" onClick={toggleSidebar}>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
             </svg>
@@ -79,10 +92,7 @@ const TaskDashboard = () => {
         <div className={`fixed h-screen bg-brand-lgreen text-white p-4 flex flex-col ${isSidebarOpen ? 'left-0' : '-left-full'} transition-all duration-300 ease-in-out`}>
           <div className="flex justify-between mb-4">
             <h2 className="text-sm">BlancTrack</h2>
-            <button
-              className="text-white"
-              onClick={toggleSidebar}
-            >
+            <button className="text-white" onClick={toggleSidebar}>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
@@ -106,10 +116,7 @@ const TaskDashboard = () => {
             </li>
           </ul>
           <div className="mt-auto flex items-center">
-            <button
-              onClick={() => handleLogout()}
-              className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-red-400 flex items-center space-x-2"
-            >
+            <button onClick={() => handleLogout()} className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-red-400 flex items-center space-x-2">
               <h2 className="text-sm">Log out</h2>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
                 <path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
@@ -128,15 +135,15 @@ const TaskDashboard = () => {
             <label htmlFor="status-filter" className="text-gray-700">Filter By Status:</label>
             <select id="status-filter" className="w-48 p-2 border border-gray-300 rounded" onChange={handleFilterChange} value={filterStatus || ''}>
               <option value="">All</option>
-              <option value="not_started">Not Started</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
             </select>
           </div>
 
           <div className="grid grid-cols-1 gap-6">
             {filteredTasks.map(task => (
-              <div key={task.id} className={`p-4 rounded shadow hover:shadow-md transition-shadow duration-200 cursor-pointer ${{'in_progress': 'bg-yellow-200', 'completed': 'bg-lime-200', 'not_started': 'bg-orange-200'}[task.status]}`}>
+              <div key={task.id} className={`p-4 rounded shadow hover:shadow-md transition-shadow duration-200 cursor-pointer ${{'In Progress': 'bg-yellow-200', 'Completed': 'bg-lime-200', 'Not Started': 'bg-orange-200'}[task.status]}`}>
               <div>
                   <h2 className="text-lg font-bold mb-2">{task.title}</h2>
                   <p className="text-sm text-gray-600 mb-2">{task.description}</p>
@@ -163,4 +170,4 @@ const TaskDashboard = () => {
   );
 };
 
-export default TaskDashboard;
+export default StaffDashboard;

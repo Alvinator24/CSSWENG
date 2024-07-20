@@ -13,14 +13,14 @@ const CreateTask = () => {
 
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [status, setStatus] = useState<{ label: string; value: string }>({ label: 'Not Started', value: 'not_started' });
+  const [status, setStatus] = useState<{ label: string; value: string }>({ label: 'Not Started', value: 'Not Started' });
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [priority, setPriority] = useState<{ label: string; value: string | null }>({ label: 'Select Priority', value: null });
   const [staffOptions, setStaffOptions] = useState<{ label: string; value: string }[]>([]);
   const [selectedStaff, setSelectedStaff] = useState<{ label: string; value: string | null }>({ label: 'Select Staff', value: null });
+  const [managerName, setManagerName] = useState<string>('');
+  const [staffName, setStaffName] = useState<string>('');
   const [createdAt] = useState(new Date());
-
-  const email = localStorage.getItem('userEmail')
 
   useEffect(() => {
     async function fetchStaff() {
@@ -42,6 +42,31 @@ const CreateTask = () => {
     fetchStaff();
   }, []);
 
+  useEffect(() => {
+    const fetchManagerName = async () => {
+      const email = localStorage.getItem('userEmail');
+
+      const { data, error } = await supabase
+        .from('user')
+        .select('firstname, lastname')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return;
+      }
+
+      const managerFirstName = data?.firstname;
+      const managerLastName = data?.lastname;
+      const managerFullName = `${managerFirstName} ${managerLastName}`;
+
+      setManagerName(managerFullName);
+    };
+
+    fetchManagerName();
+  }, []);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -56,8 +81,8 @@ const CreateTask = () => {
       status: status.value,
       dueDate: dueDate?.toISOString(),
       priorityLevel: priority.value,
-      staff: selectedStaff.value,
-      manager: email,
+      staff: staffName,
+      manager: managerName,
       createdAt: createdAt.toISOString(),
     };
 
@@ -76,9 +101,7 @@ const CreateTask = () => {
         <h3 className="text-lg text-center text-gray-900">Create New Task</h3>
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              Title
-            </label>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
             <input
               id="title"
               name="title"
@@ -90,9 +113,7 @@ const CreateTask = () => {
             />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-              Description
-            </label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
             <textarea
               id="description"
               name="description"
@@ -104,9 +125,7 @@ const CreateTask = () => {
             />
           </div>
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-              Status
-            </label>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
             <Select
               id="status"
               name="status"
@@ -116,16 +135,14 @@ const CreateTask = () => {
                 setStatus(option);
               }}
               options={[
-                { label: 'Not Started', value: 'not_started' },
-                { label: 'In Progress', value: 'in_progress' },
-                { label: 'Completed', value: 'completed' },
+                { label: 'Not Started', value: 'Not Started' },
+                { label: 'In Progress', value: 'In Progress' },
+                { label: 'Completed', value: 'Completed' },
               ]}
             />
           </div>
           <div>
-            <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">
-              Due Date
-            </label>
+            <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">Due Date</label>
             <DatePicker
               id="dueDate"
               selected={dueDate}
@@ -135,9 +152,7 @@ const CreateTask = () => {
             />
           </div>
           <div>
-            <label htmlFor="priority" className="block text-sm font-medium text-gray-700">
-              Priority Level
-            </label>
+            <label htmlFor="priority" className="block text-sm font-medium text-gray-700">Priority Level</label>
             <Select
               id="priority"
               name="priority"
@@ -148,16 +163,14 @@ const CreateTask = () => {
               }}
               options={[
                 { label: 'Select Priority', value: null },
-                { label: 'Low', value: 'low' },
-                { label: 'Medium', value: 'medium' },
-                { label: 'High', value: 'high' },
+                { label: 'Low', value: 'Low' },
+                { label: 'Medium', value: 'Medium' },
+                { label: 'High', value: 'High' },
               ]}
             />
           </div>
           <div>
-            <label htmlFor="staff" className="block text-sm font-medium text-gray-700">
-              Assign To
-            </label>
+            <label htmlFor="staff" className="block text-sm font-medium text-gray-700">Assign To</label>
             <Select
               id="staff"
               name="staff"
@@ -165,6 +178,7 @@ const CreateTask = () => {
               onChange={(selectedOption) => {
                 const option = selectedOption as { label: string; value: string };
                 setSelectedStaff(option);
+                setStaffName(option.label);
               }}
               options={staffOptions}
               placeholder="Search staff"
@@ -178,12 +192,7 @@ const CreateTask = () => {
             </div>
           </div>
           <div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              Create Task
-            </button>
+            <button type="submit" className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Create Task</button>
           </div>
           <div className="text-sm text-center">
             <Link href="/manager">

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import supabase from '../../../lib/supabaseClient';
@@ -11,6 +11,32 @@ const CreateAnnouncement = () => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [created_at] = useState(new Date());
+  const [authorName, setAuthorName] = useState<string>('');
+
+  useEffect(() => {
+    const fetchAuthorName = async () => {
+      const email = localStorage.getItem('userEmail');
+
+      const { data, error } = await supabase
+        .from('user')
+        .select('firstname, lastname')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return;
+      }
+
+      const authorFirstName = data?.firstname;
+      const authorLastName = data?.lastname;
+      const authorFullName = `${authorFirstName} ${authorLastName}`;
+
+      setAuthorName(authorFullName);
+    };
+
+    fetchAuthorName();
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -18,7 +44,8 @@ const CreateAnnouncement = () => {
     const newAnnouncement = {
       title,
       description,
-      created_at: created_at.toISOString(),
+      author: authorName,
+      created_at: created_at.toLocaleDateString(),
     };
 
     try {

@@ -17,13 +17,14 @@ interface Task {
   createdAt: string;
 }
 
-const TaskDashboard = () => {
+const ManagerDashboard = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [managerName, setManagerName] = useState<string>('');
 
   const router = useRouter();
 
@@ -57,11 +58,7 @@ const TaskDashboard = () => {
   };
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error logging out:', error.message);
-      return;
-    }
+    localStorage.removeItem('userEmail');
     router.push('/');
   };
 
@@ -100,16 +97,32 @@ const TaskDashboard = () => {
     setFilterStatus(event.target.value);
   };
 
-  const getManagerName = () => {
-    
-  }
+  useEffect(() => {
+    const fetchManagerName = async () => {
+      const fetchEmail = localStorage.getItem('userEmail');
 
-  const getStaffName = () => {
+      const { data, error } = await supabase
+        .from('user')
+        .select('firstname, lastname')
+        .eq('email', fetchEmail)
+        .single();
 
-  }
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return;
+      }
 
-  const email = localStorage.getItem('userEmail')
-  const filteredTasks = tasks.filter(task => task.manager === email && (filterStatus ? task.status === filterStatus : true));
+      const managerFirstName = data?.firstname;
+      const managerLastName = data?.lastname;
+      const managerFullName = `${managerFirstName} ${managerLastName}`;
+
+      setManagerName(managerFullName);
+    };
+
+    fetchManagerName();
+  }, []);
+
+  const filteredTasks = tasks.filter(task => task.manager === managerName && (filterStatus ? task.status === filterStatus : true));
 
   return (
     <div className="min-h-screen bg-brand-cream flex">
@@ -170,9 +183,9 @@ const TaskDashboard = () => {
           <label htmlFor="status-filter" className="text-gray-700">Filter By Status:</label>
           <select id="status-filter" className="w-48 p-2 border border-gray-300 rounded" onChange={handleFilterChange} value={filterStatus || ''}>
             <option value="">All</option>
-            <option value="not_started">Not Started</option>
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
           </select>
         
           <div className="flex-grow"></div>
@@ -184,7 +197,7 @@ const TaskDashboard = () => {
         {/* Task Cards */}
         <div className="grid grid-cols-1 gap-6">
           {filteredTasks.map(task => (
-            <div key={task.id} className={`p-4 rounded shadow hover:shadow-md transition-shadow duration-200 cursor-pointer ${{'in_progress': 'bg-yellow-200', 'completed': 'bg-lime-200', 'not_started': 'bg-orange-200'}[task.status]}`}>
+            <div key={task.id} className={`p-4 rounded shadow hover:shadow-md transition-shadow duration-200 cursor-pointer ${{'In Progress': 'bg-yellow-200', 'Completed': 'bg-lime-200', 'Not Started': 'bg-orange-200'}[task.status]}`}>
               <div>
                 <h2 className="text-lg font-bold mb-2">{task.title}</h2>
                 <p className="text-sm text-gray-600 mb-2">Description: {task.description}</p>
@@ -231,4 +244,4 @@ const TaskDashboard = () => {
   );
 };
 
-export default TaskDashboard;
+export default ManagerDashboard;
