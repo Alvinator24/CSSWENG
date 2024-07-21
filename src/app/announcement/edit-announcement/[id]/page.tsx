@@ -7,7 +7,7 @@ import supabase from '../../../../lib/supabaseClient';
 
 const EditAnnouncement = () => {
   const router = useRouter();
-  const id = useParams();
+  const { id } = useParams();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
