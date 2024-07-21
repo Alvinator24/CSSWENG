@@ -9,13 +9,14 @@ import bcrypt from 'bcryptjs';
 const SignUp = () => {
   const router = useRouter();
 
-  const [firstname, setFirstname] = useState<string>('');
-  const [lastname, setLastname] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [position, setPosition] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
-  const [passwordError, setPasswordError] = useState<string>('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [email, setEmail] = useState('');
+  const [position, setPosition] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [song, setSong] = useState('');
 
   const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -33,7 +34,8 @@ const SignUp = () => {
         lastname,
         email,
         position,
-        password: hashedPassword
+        password: hashedPassword,
+        song
       }
     ]);
 
@@ -137,6 +139,18 @@ const SignUp = () => {
             {passwordError && (
               <p className="text-red-500 text-sm mt-1">{passwordError}</p>
             )}
+          </div>
+          <div>
+            <label htmlFor="song" className="block text-sm font-medium text-gray-700">Title of your favorite song:</label>
+            <input
+              id="song"
+              name="song"
+              type="text"
+              value={song}
+              onChange={(e) => setSong(e.target.value)}
+              required
+              className="w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            />
           </div>
           <div>
             <button type="submit" className="w-full px-4 py-2 font-medium text-white bg-brand-brown hover:bg-brand-lgreen rounded">Sign Up</button>

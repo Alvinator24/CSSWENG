@@ -15,25 +15,27 @@ const ForgotPassword = () => {
   const handleForgotPassword = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const { data: user } = await supabase
+    try {
+      const { data: user, error } = await supabase
         .from('user')
-        .select('*')
+        .select('song, id')
         .eq('email', email)
         .single();
 
-    if(!user) {
+      if (error) {
         setErrorMessage('User does not exist.');
+        return;
+      }
+
+      if (user.song.toLowerCase() === song.toLowerCase()) {
+        localStorage.setItem('userEmail', email);
+        router.push(`/account/${user.id}`);
+      } else {
+        setErrorMessage('Incorrect song title. Try again.');
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
     }
-
-    // const match = await bcrypt.compare(password, user.password);
-
-    // if (!match) {
-    //     setErrorMessage('Incorrect song title.');
-    // } else {
-    //   // put email in localStorage
-    //   // use said email to find the userId
-    //  // router.push(`/account/${userId}`);
-    // }
   };
 
   return (
@@ -58,7 +60,7 @@ const ForgotPassword = () => {
             <input
               id="song"
               name="song"
-              type="song"
+              type="text"
               value={song}
               onChange={(e) => setSong(e.target.value)}
               required

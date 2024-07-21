@@ -8,10 +8,10 @@ import supabase from '../../../lib/supabaseClient';
 const CreateAnnouncement = () => {
   const router = useRouter();
 
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [created_at] = useState(new Date());
-  const [authorName, setAuthorName] = useState<string>('');
+  const [authorName, setAuthorName] = useState('');
 
   useEffect(() => {
     const fetchAuthorName = async () => {

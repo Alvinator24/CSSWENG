@@ -21,7 +21,7 @@ const StaffDashboard = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
-  const [staffName, setStaffName] = useState<string>('');
+  const [staffName, setStaffName] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
 

@@ -7,12 +7,12 @@ import supabase from '../../../lib/supabaseClient';
 import bcrypt from 'bcryptjs';
 
 const AccountDetails = () => {
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [position, setPosition] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();

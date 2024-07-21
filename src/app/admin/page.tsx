@@ -19,7 +19,7 @@ const AdminDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAnnouncementId, setSelectedAnnouncementId] = useState<number | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [authorName, setAuthorName] = useState<string>('');
+  const [authorName, setAuthorName] = useState('');
 
   const router = useRouter();
 

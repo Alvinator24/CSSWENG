@@ -9,9 +9,9 @@ const EditAnnouncement = () => {
   const router = useRouter();
   const id = useParams();
 
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [created_at, setCreatedAt] = useState<string>('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [created_at, setCreatedAt] = useState('');
 
   useEffect(() => {
     async function fetchAnnouncement() {

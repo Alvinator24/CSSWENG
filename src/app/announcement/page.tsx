@@ -16,6 +16,8 @@ interface Announcement {
 const AnnouncementsPage = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [position, setPosition] = useState('');
+  const [userId, setUserId] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -32,6 +34,40 @@ const AnnouncementsPage = () => {
     }
 
     fetchAnnouncements();
+  }, []);
+
+  useEffect(() => {
+    async function fetchPosition() {
+      const email = localStorage.getItem('userEmail');
+      try {
+        const { data, error } = await supabase.from('user').select('position').eq('email', email).single();
+        if (error) {
+          throw error;
+        }
+        setPosition(data.position);
+      } catch (error) {
+        console.error('Error fetching position:', error);
+      }
+    }
+
+    fetchPosition();
+  }, []);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const email = localStorage.getItem('userEmail');
+      const { data, error } = await supabase.from('user').select('id').eq('email', email).single();
+
+      if (error) {
+        console.error('Error:', error.message);
+        return;
+      }
+      if (data) {
+        setUserId(data.id);
+      }
+    };
+
+    fetchUserId();
   }, []);
 
   const handleLogout = async () => {
@@ -73,14 +109,26 @@ const AnnouncementsPage = () => {
           </div>
           <ul className="space-y-2">
             <li>
-              <Link href="/account">
+              <Link href={`/account/${userId}`}>
                 <h2 className="block text-white hover:text-brand-dgreen">Account</h2>
               </Link>
             </li>
             <li>
-              <Link href="/dashboard">
-                <h2 className="block text-white hover:text-brand-dgreen">Dashboard</h2>
-              </Link>
+            {position === 'admin' && (
+                <Link href="/admin">
+                  <h2 className="font-medium text-brand-dgreen">Dashboard</h2>
+                </Link>
+              )}
+              {position === 'manager' && (
+                <Link href="/manager">
+                  <h2 className="font-medium text-brand-dgreen">Dashboard</h2>
+                </Link>
+              )}
+              {position === 'staff' && (
+                <Link href="/staff">
+                  <h2 className="font-medium text-brand-dgreen">Dashboard</h2>
+                </Link>
+              )}
             </li>
             <li>
               <Link href="/announcement">

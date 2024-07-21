@@ -24,7 +24,7 @@ const ManagerDashboard = () => {
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [managerName, setManagerName] = useState<string>('');
+  const [managerName, setManagerName] = useState('');
 
   const router = useRouter();
 

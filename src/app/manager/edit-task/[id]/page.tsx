@@ -12,14 +12,14 @@ const EditTask = () => {
   const router = useRouter();
   const taskId = useParams().id;
 
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [status, setStatus] = useState<{ label: string; value: string | null }>({ label: 'Select Status', value: null });
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [priority, setPriority] = useState<{ label: string; value: string | null }>({ label: 'Select Priority', value: null });
   const [staffOptions, setStaffOptions] = useState<{ label: string; value: string }[]>([]);
   const [staff, setStaff] = useState<{ label: string; value: string | null }>({ label: 'Select Staff', value: null });
-  const [createdAt, setCreatedAt] = useState<Date>(new Date());
+  const [createdAt, setCreatedAt] = useState(new Date());
 
   useEffect(() => {
     async function fetchStaff() {

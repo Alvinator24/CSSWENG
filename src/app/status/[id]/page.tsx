@@ -3,16 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import Select from 'react-select';
+import dynamic from 'next/dynamic';
 import supabase from '../../../lib/supabaseClient';
 
-const EditTask = () => {
+const Select = dynamic(() => import('react-select'), { ssr: false });
+
+const UpdateStatus = () => {
   const router = useRouter();
   const taskId = useParams().id;
 
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [status, setStatus] = useState<{ label: string; value: string | null }>({ label: 'Select Status', value: null });
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [status, setStatus] = useState<{ label: string; value: string }>({ label: 'Select Status', value: '' });
 
   useEffect(() => {
     async function fetchTask() {
@@ -37,7 +39,7 @@ const EditTask = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (status.value === null) {
+    if (!status.value) {
       alert('Please select a valid status.');
       return;
     }
@@ -90,6 +92,7 @@ const EditTask = () => {
                 { label: 'In Progress', value: 'In Progress' },
                 { label: 'Completed', value: 'Completed' },
               ]}
+              required
             />
           </div>
           <div className="space-y-4">
@@ -106,4 +109,4 @@ const EditTask = () => {
   );
 };
 
-export default EditTask;
+export default UpdateStatus;
