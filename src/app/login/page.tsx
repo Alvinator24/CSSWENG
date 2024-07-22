@@ -114,7 +114,7 @@ const LoginPage = () => {
           <div className="text-sm text-center">
             <Link href="/signup">
               <h2 className="font-medium text-brand-dgreen">
-                Don't have an account? Sign up
+                Don&apos;t have an account? Sign up
               </h2>
             </Link>
           </div>
