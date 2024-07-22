@@ -125,7 +125,7 @@ const ManagerDashboard = () => {
   const filteredTasks = tasks.filter(task => task.manager === managerName && (filterStatus ? task.status === filterStatus : true));
 
   return (
-    <div className="min-h-screen w-full bg-brand-cream flex">
+    <div className="min-h-screen w-full bg-brand-cream flex overflow-hidden">
 
       {/* Hamburger Icon */}
         {!isSidebarOpen && (
