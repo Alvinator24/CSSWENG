@@ -171,7 +171,7 @@ const AdminDashboard = () => {
               </Link>
             </li>
           </ul>
-          <div className="mt-auto flex items-center">
+          <div className="mt-36 flex items-center">
             <button onClick={() => handleLogout()} className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-red-400 flex items-center space-x-2">
               <h2 className="text-sm">Log out</h2>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
