@@ -180,7 +180,6 @@ const ManagerDashboard = () => {
 
           {/* Filter Dropdown */}
           <div className="flex items-center space-x-4 mb-4">
-            <label htmlFor="status-filter" className="text-gray-700">Filter By Status:</label>
             <select id="status-filter" className="w-48 p-2 border border-gray-300 rounded" onChange={handleFilterChange} value={filterStatus || ''}>
               <option value="">All</option>
               <option value="Not Started">Not Started</option>
