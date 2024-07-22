@@ -161,7 +161,7 @@ const AdminDashboard = () => {
               </Link>
             </li>
             <li>
-              <Link href="/staff">
+              <Link href="/admin">
                 <h2 className="block text-white hover:text-brand-dgreen">Dashboard</h2>
               </Link>
             </li>
