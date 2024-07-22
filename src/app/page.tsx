@@ -13,7 +13,7 @@ const LandingPage = () => {
           className="mx-auto my-2"
         />
         <h1 className="text-3xl text-center text-gray-900 mb-8">
-          Welcome to BlancTrack, <br/> Your Housekeeping Tool.
+          Welcome to <br/> BlancTrack.
         </h1>
         <div className="flex justify-center space-x-4">
           <Link href="/login">
