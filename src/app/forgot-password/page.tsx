@@ -29,7 +29,7 @@ const ForgotPassword = () => {
 
       if (user.song.toLowerCase() === song.toLowerCase()) {
         localStorage.setItem('userEmail', email);
-        router.push(`/account/${user.id}`);
+        router.push('/forgot-password/change');
       } else {
         setErrorMessage('Incorrect song title. Try again.');
       }
