@@ -16,10 +16,22 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [song, setSong] = useState('');
 
   const handleSignup = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    const { data: existingUser } = await supabase
+      .from('user')
+      .select('*')
+      .eq('email', email)
+      .single()
+
+    if (existingUser != null) {
+      setEmailError('This email is already registered. Use a new one.');
+      return;
+    }
 
     if (password !== passwordConfirmation) {
       setPasswordError('Passwords do not match. Try again.');
@@ -96,6 +108,9 @@ const SignUp = () => {
               required
               className="w-full px-3 py-2 mt-1 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
+            {emailError && (
+              <p className="text-red-500 text-sm mt-1">{emailError}</p>
+            )}
           </div>
           <div>
             <label htmlFor="position" className="block text-sm font-medium text-gray-700">Position</label>
