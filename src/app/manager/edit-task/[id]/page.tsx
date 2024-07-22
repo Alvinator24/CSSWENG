@@ -24,13 +24,13 @@ const EditTask = () => {
   useEffect(() => {
     async function fetchStaff() {
       try {
-        const { data: staff, error } = await supabase.from('staff').select('firstname, lastname, email');
+        const { data: staff, error } = await supabase.from('user').select('firstname, lastname').eq('position', 'staff');
         if (error) {
           throw error;
         }
         const options = staff.map((member: any) => ({
           label: `${member.firstname} ${member.lastname}`,
-          value: member.email
+          value: `${member.firstname} ${member.lastname}`
         }));
         setStaffOptions(options);
       } catch (error) {
@@ -139,9 +139,9 @@ const EditTask = () => {
               onChange={(selectedOption) => setStatus(selectedOption as { label: string; value: string })}
               options={[
                 { label: 'Select Status', value: null },
-                { label: 'Not Started', value: 'not_started' },
-                { label: 'In Progress', value: 'in_progress' },
-                { label: 'Completed', value: 'completed' },
+                { label: 'Not Started', value: 'Not Started' },
+                { label: 'In Progress', value: 'In Progress' },
+                { label: 'Completed', value: 'Completed' },
               ]}
             />
           </div>
