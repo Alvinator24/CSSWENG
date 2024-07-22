@@ -125,7 +125,7 @@ const ManagerDashboard = () => {
   const filteredTasks = tasks.filter(task => task.manager === managerName && (filterStatus ? task.status === filterStatus : true));
 
   return (
-    <div className="min-h-screen bg-brand-cream flex">
+    <div className="min-h-screen w-full bg-brand-cream flex">
 
       {/* Hamburger Icon */}
         {!isSidebarOpen && (
@@ -137,7 +137,7 @@ const ManagerDashboard = () => {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed h-screen bg-brand-lgreen text-white p-4 flex flex-col ${isSidebarOpen ? 'left-0' : '-left-full'} transition-all duration-300 ease-in-out`}>
+      <div className={`fixed top-0 h-[100vh] bg-brand-lgreen text-white p-4 flex flex-col ${isSidebarOpen ? 'left-0' : '-left-full'} transition-all duration-300 ease-in-out`}>
           <div className="flex justify-between mb-4">
             <h2 className="text-sm">BlancTrack</h2>
             <button className="text-white" onClick={toggleSidebar}>
