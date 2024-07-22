@@ -163,7 +163,7 @@ const ManagerDashboard = () => {
               </Link>
             </li>
           </ul>
-          <div className="mt-auto flex items-center">
+          <div className="mt-36 flex items-center">
             <button onClick={() => handleLogout()} className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-red-400 flex items-center space-x-2">
               <h2 className="text-sm">Log out</h2>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
@@ -175,7 +175,8 @@ const ManagerDashboard = () => {
         </div>
 
       {/* Main Content */}
-      <div className="flex-grow p-8">
+      <div className="flex-grow flex items-center justify-center p-8">
+        <div className="w-full max-w-4xl">
         <h1 className="text-2xl font-bold text-center mb-8">Task Dashboard</h1>
 
         {/* Filter Dropdown */}
@@ -187,7 +188,7 @@ const ManagerDashboard = () => {
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </select>
-        
+
           <div className="flex-grow"></div>
           <Link href="/manager/create-task">
               <h2 className="px-4 py-2 bg-brand-brown text-white rounded hover:bg-brand-lgreen">+Add</h2>
@@ -239,6 +240,8 @@ const ManagerDashboard = () => {
             </div>
           </div>
         )}
+        </div>
+        
       </div>
     </div>
   );
