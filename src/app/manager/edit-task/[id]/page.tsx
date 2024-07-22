@@ -164,9 +164,9 @@ const EditTask = () => {
               onChange={(selectedOption) => setPriority(selectedOption as { label: string; value: string })}
               options={[
                 { label: 'Select Priority', value: null },
-                { label: 'Low', value: 'low' },
-                { label: 'Medium', value: 'medium' },
-                { label: 'High', value: 'high' },
+                { label: 'Low', value: 'Low' },
+                { label: 'Medium', value: 'Medium' },
+                { label: 'High', value: 'High' },
               ]}
             />
           </div>
