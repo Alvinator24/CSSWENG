@@ -20,8 +20,35 @@ const CreateTask = () => {
   const [selectedStaff, setSelectedStaff] = useState<{ label: string; value: string | null }>({ label: 'Select Staff', value: null });
   const [managerName, setManagerName] = useState('');
   const [staffName, setStaffName] = useState('');
+  const [position, setPosition] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [createdAt] = useState(new Date());
+
+  useEffect(() => {
+    const fetchPosition = async () => {
+      const email = localStorage.getItem('userEmail');
+      const { data, error } = await supabase
+        .from('user')
+        .select('position')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+      if (data) {
+        setPosition(data.position);
+      }
+    };
+
+    fetchPosition();
+  }, []);
+
+  useEffect(() => {
+    if (position && position != 'manager') {
+      router.push(`/${position}`);
+    }
+  }, [position]);
 
   useEffect(() => {
     async function fetchStaff() {

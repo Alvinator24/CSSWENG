@@ -15,6 +15,33 @@ const UpdateStatus = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<{ label: string; value: string }>({ label: 'Select Status', value: '' });
+  const [position, setPosition] = useState('');
+
+  useEffect(() => {
+    const fetchPosition = async () => {
+      const email = localStorage.getItem('userEmail');
+      const { data, error } = await supabase
+        .from('user')
+        .select('position')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+      if (data) {
+        setPosition(data.position);
+      }
+    };
+
+    fetchPosition();
+  }, []);
+
+  useEffect(() => {
+    if (position && position != 'staff') {
+      router.push(`/${position}`);
+    }
+  }, [position]);
 
   useEffect(() => {
     async function fetchTask() {

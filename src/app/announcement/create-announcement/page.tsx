@@ -12,6 +12,33 @@ const CreateAnnouncement = () => {
   const [description, setDescription] = useState('');
   const [created_at] = useState(new Date());
   const [authorName, setAuthorName] = useState('');
+  const [position, setPosition] = useState('');
+
+  useEffect(() => {
+    const fetchPosition = async () => {
+      const email = localStorage.getItem('userEmail');
+      const { data, error } = await supabase
+        .from('user')
+        .select('position')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+      if (data) {
+        setPosition(data.position);
+      }
+    };
+
+    fetchPosition();
+  }, []);
+
+  useEffect(() => {
+    if (position && position != 'admin') {
+      router.push(`/${position}`);
+    }
+  }, [position]);
 
   useEffect(() => {
     const fetchAuthorName = async () => {

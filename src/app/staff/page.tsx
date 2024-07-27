@@ -23,7 +23,34 @@ const StaffDashboard = () => {
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const [staffName, setStaffName] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
+  const [position, setPosition] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchPosition = async () => {
+      const email = localStorage.getItem('userEmail');
+      const { data, error } = await supabase
+        .from('user')
+        .select('position')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+      if (data) {
+        setPosition(data.position);
+      }
+    };
+
+    fetchPosition();
+  }, []);
+
+  useEffect(() => {
+    if (position && position != 'staff') {
+      router.push(`/${position}`);
+    }
+  }, [position]);
 
   useEffect(() => {
     async function fetchTasks() {

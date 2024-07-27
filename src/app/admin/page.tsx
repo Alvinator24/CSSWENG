@@ -19,9 +19,36 @@ const AdminDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAnnouncementId, setSelectedAnnouncementId] = useState<number | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [position, setPosition] = useState('');
   const [authorName, setAuthorName] = useState('');
 
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchPosition = async () => {
+      const email = localStorage.getItem('userEmail');
+      const { data, error } = await supabase
+        .from('user')
+        .select('position')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+      if (data) {
+        setPosition(data.position);
+      }
+    };
+
+    fetchPosition();
+  }, []);
+
+  useEffect(() => {
+    if (position && position != 'admin') {
+      router.push(`/${position}`);
+    }
+  }, [position]);
 
   useEffect(() => {
     async function fetchAnnouncements() {
