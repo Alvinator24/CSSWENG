@@ -94,14 +94,12 @@ const AnnouncementsPage = () => {
           </button>
         )}
 
+
         {/* Sidebar */}
-        <div className={`fixed h-screen bg-brand-lgreen text-white p-4 flex flex-col justify-between ${isSidebarOpen ? 'left-0' : '-left-full'} transition-all duration-300 ease-in-out`}>
+        <div className={`fixed top-0 h-full bg-brand-lgreen text-white p-4 flex flex-col ${isSidebarOpen ? 'left-0' : '-left-full'} transition-all duration-300 ease-in-out`}>
           <div className="flex justify-between mb-4">
             <h2 className="text-sm">BlancTrack</h2>
-            <button
-              className="text-white focus:outline-none"
-              onClick={toggleSidebar}
-            >
+            <button className="text-white" onClick={toggleSidebar}>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
@@ -114,7 +112,7 @@ const AnnouncementsPage = () => {
               </Link>
             </li>
             <li>
-            {position === 'admin' && (
+              {position === 'admin' && (
                 <Link href="/admin">
                   <h2 className="font-medium text-brand-dgreen">Dashboard</h2>
                 </Link>
@@ -136,11 +134,8 @@ const AnnouncementsPage = () => {
               </Link>
             </li>
           </ul>
-          <div className="mt-auto flex items-center">
-            <button
-              onClick={() => handleLogout()}
-              className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-red-400 flex items-center space-x-2"
-            >
+          <div className="mt-36 flex items-center">
+            <button onClick={() => handleLogout()} className="px-4 py-2 bg-rose-500 text-white rounded hover:bg-red-400 flex items-center space-x-2">
               <h2 className="text-sm">Log out</h2>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
                 <path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
