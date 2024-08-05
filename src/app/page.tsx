@@ -18,7 +18,7 @@ const LandingPage = () => {
         <div className="flex justify-center space-x-4">
           <Link href="/login">
             <h3 className="px-6 py-3 text-lg font-medium text-white bg-brand-brown rounded-lg hover:bg-brand-lgreen focus:outline-none">
-              Login
+              Log In
             </h3>
           </Link>
           <Link href="/signup">
