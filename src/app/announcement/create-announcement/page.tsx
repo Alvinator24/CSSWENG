@@ -72,7 +72,7 @@ const CreateAnnouncement = () => {
       title,
       description,
       author: authorName,
-      created_at: created_at.toLocaleDateString(),
+      created_at: new Date().toLocaleDateString(),
     };
 
     try {
@@ -123,7 +123,7 @@ const CreateAnnouncement = () => {
           </div>
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-900">
-              <p>Today is: {created_at.toLocaleDateString()}</p>
+              <p>Today is: {new Date().toLocaleDateString()}</p>
             </div>
           </div>
           <div>
