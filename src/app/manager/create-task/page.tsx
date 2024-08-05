@@ -219,7 +219,7 @@ const CreateTask = () => {
           </div>
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-900">
-              <p>Today is: {createdAt.toLocaleDateString()}</p>
+              <p>Today is: {new Date().toLocaleDateString()}</p>
             </div>
           </div>
           {errorMessage && (
